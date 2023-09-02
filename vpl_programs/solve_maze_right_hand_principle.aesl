@@ -1,0 +1,78 @@
+<!DOCTYPE aesl-source>
+<network>
+<event name="pair_run" size="1"/>
+<event name="debug_log" size="14"/>
+<node nodeId="{3aecd60b-8445-49b7-99c6-c98d28b781c0}" name="Thymio sur DESKTOP-L6Q8N59 - 8372"># reset outputs
+call sound.system(-1)
+call leds.top(0,0,0)
+call leds.bottom.left(0,0,0)
+call leds.bottom.right(0,0,0)
+call leds.circle(0,0,0,0,0,0,0,0)
+
+onevent prox
+	when prox.ground.delta[0] &lt;= 400 do
+		motor.left.target = 0
+		motor.right.target = 0
+		emit pair_run 0
+		_emit debug_log [0, 0x2, 0x83, 0x8, 0x190, 0x1c2, 0xa0a]
+	end
+
+	when prox.ground.delta[1] &lt;= 400 do
+		motor.left.target = 0
+		motor.right.target = 0
+		emit pair_run 1
+		_emit debug_log [0x1, 0x2, 0x83, 0x2, 0x190, 0x1c2, 0xa0a]
+	end
+
+	when prox.horizontal[1] &lt;= 1000 and prox.horizontal[2] &lt;= 1000 and prox.horizontal[3] &lt;= 1000 do
+		motor.left.target = 200
+		motor.right.target = 200
+		emit pair_run 2
+		_emit debug_log [0x2, 0x2, 0x82, 0xa80, 0x3e8, 0x7d0, 0xe0e]
+	end
+
+	when prox.horizontal[4] >= 2000 do
+		motor.left.target = 0
+		motor.right.target = 200
+		emit pair_run 3
+		_emit debug_log [0x3, 0x2, 0x82, 0x10, 0x3e8, 0x7d0, 0xa0e]
+	end
+
+	when prox.horizontal[4] &lt;= 1000 do
+		motor.left.target = 200
+		motor.right.target = -200
+		emit pair_run 4
+		_emit debug_log [0x4, 0x2, 0x82, 0x20, 0x3e8, 0x7d0, 0xe06]
+	end
+
+<toolsPlugins>
+<ThymioVisualProgramming>
+<vplroot xml-format-version="1">
+<program advanced_mode="0">
+<set>
+<block value3="450" value1="0" type="event" name="proxground" value2="400" value0="2"/>
+<block value1="0" type="action" name="move" value0="0"/>
+</set>
+<set>
+<block value3="450" value1="2" type="event" name="proxground" value2="400" value0="0"/>
+<block value1="0" type="action" name="move" value0="0"/>
+</set>
+<set>
+<block value6="0" value3="2" value8="2000" value1="2" type="event" value4="0" name="prox" value2="2" value0="0" value5="0" value7="1000"/>
+<block value1="200" type="action" name="move" value0="200"/>
+</set>
+<set>
+<block value6="0" value3="0" value8="2000" value1="0" type="event" value4="1" name="prox" value2="0" value0="0" value5="0" value7="1000"/>
+<block value1="200" type="action" name="move" value0="0"/>
+</set>
+<set>
+<block value6="0" value3="0" value8="2000" value1="0" type="event" value4="2" name="prox" value2="0" value0="0" value5="0" value7="1000"/>
+<block value1="-200" type="action" name="move" value0="200"/>
+</set>
+<set/>
+</program>
+</vplroot>
+</ThymioVisualProgramming>
+</toolsPlugins>
+</node>
+</network>
